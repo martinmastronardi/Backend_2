@@ -1,21 +1,18 @@
 const Ticket = require('../models/Ticket');
-const UserDAO = require('../dao/user.dao');
+const { v4: uuidv4 } = require('uuid');
 const MailService = require('./mail.service');
 
 class TicketService {
-  async generateTicket(cart, userId) {
-    const user = await UserDAO.getUserById(userId);
-    const amount = cart.products.reduce((total, item) => total + (item.price * item.quantity), 0);
-
+    async generateTicket(cart, userId, totalAmount) {
     const ticket = new Ticket({
-      amount,
-      purchaser: user.email
+      code: uuidv4(),
+      amount: totalAmount,
+      purchaser: userId,
+      purchase_datetime: new Date()
     });
 
     await ticket.save();
-
-    await MailService.sendPurchaseConfirmation(user.email, ticket);
-
+    await MailService.sendPurchaseConfirmation(userId.email, ticket);
     return ticket;
   }
 }

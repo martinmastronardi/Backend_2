@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const sessionRoutes = require('./routes/sessionRoutes');
 const authController = require('./controllers/authController');
 const productRoutes = require('./routes/product.routes');
+const cartRoutes = require('./routes/cart.routes');
 require('./config/passport')(passport);
 const connectDB = async () => {
   try {
@@ -28,6 +29,7 @@ app.use(passport.initialize());
 app.post('/api/sessions/login', authController.login);
 app.use('/api/sessions', sessionRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/carts', cartRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

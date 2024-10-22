@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Cart = require('../models/Cart');
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -41,7 +42,16 @@ const register = async (req, res) => {
     });
 
     await newUser.save();
-    return res.status(201).json({ message: 'Usuario registrado exitosamente', user: newUser });
+
+    const newCart = new Cart({
+      user: newUser._id,
+      products: []
+    });
+
+    await newCart.save();
+
+    return res.status(201).json({ message: 'Usuario y carrito registrados exitosamente',user: newUser,
+      cart: newCart });
   } catch (err) {
     return res.status(500).json({ message: 'Error al registrar el usuario', error: err.message });
   }
